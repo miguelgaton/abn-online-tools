@@ -1,0 +1,9 @@
+.abnot textarea { height:100px; }
+.abnot input[type="text"] { height:30px; font-weight:bold; font-size:1.6em; padding:5px 10px; }
+
+.abnot textarea,
+.abnot input[type="text"] { width:100%; border:2px solid #ccc; border-radius:5px; }
+
+#sct_color_picker_i { width:50%; }
+
+#restool.showme { display:block; margin:10px 25px; padding:20px 0; background:#f1f1f1; text-align:center; }
