@@ -3,7 +3,7 @@
 	Plugin Name: ABN Online Tools
 	Plugin URI:  http://www.actualidadblog.com/
 	Description: Online Tools for the awesome ABN Framework theme
-	Version:     1.0
+	Version:     1.1
 	Author:      Raul Illana <raul.illana@abinternet.es>
 	Author URI:  http://raulillana.com/
 	License:     GPL2
@@ -27,6 +27,9 @@ add_shortcode('abnot-word-count', array('ABN_Online_Tools', 'sct_word_count'));
 add_shortcode('abnot-color-picker', array('ABN_Online_Tools', 'sct_color_picker'));
 add_shortcode('abnot-hex-rgb', array('ABN_Online_Tools', 'sct_hex_rgb'));
 add_shortcode('abnot-rgb-hex', array('ABN_Online_Tools', 'sct_rgb_hex'));
+
+add_shortcode('abnot-rgb-cmyk', array('ABN_Online_Tools', 'sct_rgb_cmyk'));
+add_shortcode('abnot-cmyk-rgb', array('ABN_Online_Tools', 'sct_cmyk_rgb'));
 
 // actions
 add_action('wp_enqueue_scripts', array('ABN_Online_Tools', 'load_scripts'));
@@ -55,6 +58,14 @@ class ABN_Online_Tools
 			'rgb-hex'       => array(
 				'title'     => 'Convertir color RGB a HEX',
 				'shortcode' => '[abnot-rgb-hex]'
+			),
+			'rgb-cmyk'       => array(
+				'title'     => 'Convertir color RGB a CMYK',
+				'shortcode' => '[abnot-rgb-cmyk]'
+			),
+			'cmyk-rgb'       => array(
+				'title'     => 'Convertir color CMYK a RGB',
+				'shortcode' => '[abnot-cmyk-rgb]'
 			)
 		);
 
@@ -68,11 +79,12 @@ class ABN_Online_Tools
 	public static function load_scripts()
 	{
 		foreach( self::$tools as $tool => $t )
+		{
 			if( is_page($t['title']) )
 			{
 				wp_enqueue_style('wp-color-picker');
 				wp_enqueue_script('iris', admin_url('js/iris.min.js'), array('jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch'), false, 1);
-				wp_enqueue_script('wp-color-picker', admin_url( 'js/color-picker.min.js' ), array('iris'), false, 1);
+				wp_enqueue_script('wp-color-picker', admin_url('js/color-picker.min.js'), array('iris'), false, 1);
 
 				$colorpicker_l10n = array(
 					'clear'         => __('Clear'),
@@ -85,6 +97,7 @@ class ABN_Online_Tools
 				wp_enqueue_style('abn-online-tools-css', plugins_url('abn-online-tools.css', __FILE__));
 				wp_enqueue_script('abn-online-tools-js', plugins_url('abn-online-tools.js', __FILE__), array('iris'), false, true);
 			}
+		}
 	}
 
 	// add pages on activate
@@ -96,7 +109,14 @@ class ABN_Online_Tools
 			error_log('ABNOT@activate: Parent create error!');
 
 		else foreach( self::$tools as $tool => $t )
-			self::create_page($t['title'], $t['shortcode'], $parent_id);
+		{
+			$pid = get_page_by_title($t['title'], 'OBJECT', 'page');
+
+			if( !$pid || is_wp_error($pid) )
+				self::create_page($t['title'], $t['shortcode'], $parent_id);
+
+			else wp_update_post(array('ID' => $pid->ID, 'post_status' => 'publish'));
+		}
 	}
 
 	// draft pages on deactivate
@@ -247,6 +267,32 @@ class ABN_Online_Tools
 <div class="abnot">
 	<p><input type="text" id="sct_hex_rgb_i" name="sct_hex_rgb_i" placeholder="Ej: FF00AA"></p>
 	<input class="xlarge abn awebsome" type="submit" id="sct_hex_rgb_sub" name="sct_hex_rgb_sub" value="<?php _e('Convertir a RGB', 'abnot') ?>"> <span id="restool"></span>
+</div>
+<?php
+		return ob_get_clean();
+	}
+
+	//
+	public static function sct_rgb_cmyk()
+	{
+		ob_start();
+?>
+<div class="abnot">
+	<p><input type="text" id="sct_rgb_cmyk_i" name="sct_rgb_cmyk_i" placeholder="Ej: 250,188,24"></p>
+	<input class="xlarge abn awebsome" type="submit" id="sct_rgb_cmyk_sub" name="sct_rgb_cmyk_sub" value="<?php _e('Convertir a CMYK', 'abnot') ?>"> <span id="restool"></span>
+</div>
+<?php
+		return ob_get_clean();
+	}
+
+	//
+	public static function sct_cmyk_rgb()
+	{
+		ob_start();
+?>
+<div class="abnot">
+	<p><input type="text" id="sct_cmyk_rgb_i" name="sct_cmyk_rgb_i" placeholder="Ej: 0,0.906,0.729,0"></p>
+	<input class="xlarge abn awebsome" type="submit" id="sct_cmyk_rgb_sub" name="sct_cmyk_rgb_sub" value="<?php _e('Convertir a RGB', 'abnot') ?>"> <span id="restool"></span>
 </div>
 <?php
 		return ob_get_clean();
