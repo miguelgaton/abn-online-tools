@@ -4,6 +4,9 @@
 * CSS beautify/minify
 * Responsive website tester
 
+- 1.2 -
+* Integrated some scripts and styles to avoid calling `wp-admin` urls
+
 - 1.1 -
 
 * RGB to CMYK

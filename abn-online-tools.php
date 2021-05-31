@@ -3,7 +3,7 @@
 	Plugin Name: ABN Online Tools
 	Plugin URI:  http://www.actualidadblog.com/
 	Description: Online Tools for the awesome ABN Framework theme
-	Version:     1.1
+	Version:     1.2
 	Author:      Raul Illana <raul.illana@abinternet.es>
 	Author URI:  http://raulillana.com/
 	License:     GPL2
@@ -82,9 +82,10 @@ class ABN_Online_Tools
 		{
 			if( is_page($t['title']) )
 			{
-				wp_enqueue_style('wp-color-picker');
-				wp_enqueue_script('iris', admin_url('js/iris.min.js'), array('jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch'), false, 1);
-				wp_enqueue_script('wp-color-picker', admin_url('js/color-picker.min.js'), array('iris'), false, 1);
+				wp_enqueue_style( 'abn-color-picker-css', plugins_url( 'wp-color-picker.min.css', __FILE__ ) );
+				wp_enqueue_script( 'jquery' );
+				wp_enqueue_script( 'iris', plugins_url( 'iris.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ), false, 1 );
+				wp_enqueue_script( 'wp-color-picker', plugins_url( 'color-picker.min.js', __FILE__ ), array('iris'), false, 1 );
 
 				$colorpicker_l10n = array(
 					'clear'         => __('Clear'),
